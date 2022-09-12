@@ -4,7 +4,7 @@ import Card from "./Card";
 import defaultAvatar from "../images/profile-avatar.jpg";
 
 function Main(props) {
-  const { onEditProfile, onAddPlace, onEditAvatar, onCardClick} = props;
+  const { onEditProfile, onAddPlace, onEditAvatar, onCardClick } = props;
 
   const [userName, setUserName] = React.useState('');
   const [userDescription, setUserDescription] = React.useState('');
@@ -18,16 +18,22 @@ function Main(props) {
         setUserDescription(result.about);
         setUserAvatar(result.avatar);
       })
+      .catch((result) => {
+        console.log(result);
+      })
 
     api.getInitialCards()
       .then((result) => {
         setCards(result);
       })
+      .catch((result) => {
+        console.log(result);
+      })
   }, []
   );
 
   const cardList = cards.map((card) => {
-      return <Card key={card._id} card={card} onCardClick={onCardClick}/>
+    return <Card key={card._id} card={card} onCardClick={onCardClick} />
   });
 
   return (
@@ -40,7 +46,7 @@ function Main(props) {
           >
             <img
               src={userAvatar}
-              alt=""
+              alt="Аватар пользователя"
               className="profile__avatar"
             />
           </div>

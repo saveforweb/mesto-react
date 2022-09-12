@@ -1,9 +1,9 @@
 function ImagePopup(props) {
 
-  const {card, onClose} = props;
+  const { card, onClose } = props;
 
   return (
-    <div className={`popup popup_type_fullscreen popup-fullscreen ${card ? 'popup_open' : ''}`} onClick={onClose}>
+    <div className={`popup popup_type_fullscreen popup-fullscreen ${card.link ? 'popup_open' : ''}`} onClick={onClose}>
       <div className="popup__window-fullscreen">
         <button
           type="button"
