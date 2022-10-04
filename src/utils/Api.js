@@ -19,25 +19,25 @@ class Api {
 
   getInitialCards() {
     return this._request(`${this._baseUrl}/cards`, {
-        headers: this._headers
-      })
+      headers: this._headers
+    })
   }
 
   addUserCard(name, link) {
     return this._request(`${this._baseUrl}/cards`, {
-        method: 'POST',
-        body: JSON.stringify({
-          name: name,
-          link: link
-        }),
-        headers: this._headers
-      })
+      method: 'POST',
+      body: JSON.stringify({
+        name: name,
+        link: link
+      }),
+      headers: this._headers
+    })
   }
 
   getUserInfo() {
     return this._request(`${this._baseUrl}/users/me`, {
-        headers: this._headers
-      })
+      headers: this._headers
+    })
   }
 
   updateUserInfo(name, about) {
@@ -61,25 +61,26 @@ class Api {
     })
   }
 
-  addCardLike(id) {
-    return this._request(`${this._baseUrl}/cards/${id}/likes `, {
-      method: 'PUT',
-      headers: this._headers
-    })
-  }
-
-  removeCardLike(id) {
-    return this._request(`${this._baseUrl}/cards/${id}/likes`, {
-      method: 'DELETE',
-      headers: this._headers
-    })
-  }
-
   deleleCard(id) {
     return this._request(`${this._baseUrl}/cards/${id}`, {
       method: 'DELETE',
       headers: this._headers
     })
+  }
+
+  changeLikeCardStatus(id, isLiked) {
+    if (!isLiked) {
+      return this._request(`${this._baseUrl}/cards/${id}/likes `, {
+        method: 'PUT',
+        headers: this._headers
+      })
+    } else {
+      return this._request(`${this._baseUrl}/cards/${id}/likes`, {
+        method: 'DELETE',
+        headers: this._headers
+      })
+    }
+
   }
 
 }

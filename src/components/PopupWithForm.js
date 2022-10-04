@@ -1,6 +1,6 @@
 function PopupWithForm(props) {
 
-    const { title, name, isOpen, onClose, children, buttonText } = props;
+    const { title, name, isOpen, onClose, children, buttonText, onSubmit } = props;
 
     return (
         <div className={`popup popup-${name} ${isOpen ? 'popup_open' : ''}`} onClick={onClose}>
@@ -14,6 +14,7 @@ function PopupWithForm(props) {
                 <form
                     className={`popup__form popup__form_type_${name}`}
                     name={`edit-${name}`}
+                    onSubmit={onSubmit}
                 >
                     <fieldset className="popup__form-items">
                         {children}
