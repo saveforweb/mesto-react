@@ -1,24 +1,21 @@
 import React from "react";
 import PopupWithForm from "./PopupWithForm";
+import useForm from "../hooks/useForm"
 
 function AddPlacePopup(props) {
-    const { isOpen, onClose, onAddPlace } = props;
-    const [place, setPlace] = React.useState('');
-    const [link, setLink] = React.useState('');
+    const { isOpen, onClose, onAddPlace, isLoading } = props;
 
-    function handlePlaceChange(e) {
-        setPlace(e.target.value);
-    }
+    const { values, handleChange, setValues } = useForm({ place: '', link: '' });
+    const name = values.place;
+    const link = values.link;
 
-    function handleLinkChange(e) {
-        setLink(e.target.value);
-    }
+    React.useEffect(() => {
+        setValues({ place: '', link: '' })
+    }, [isOpen]);
 
     function handleSubmit(e) {
         e.preventDefault();
-        onAddPlace({ name: place, link });
-        setPlace('');
-        setLink('');
+        onAddPlace({ name, link });
     }
 
     return (
@@ -27,7 +24,7 @@ function AddPlacePopup(props) {
             name="content"
             isOpen={isOpen}
             onClose={onClose}
-            buttonText="Добавить"
+            buttonText={isLoading ? 'Сохранение...' : 'Сохранить'}
             onSubmit={handleSubmit}
         >
             <input
@@ -39,8 +36,8 @@ function AddPlacePopup(props) {
                 minLength={2}
                 maxLength={30}
                 required
-                onChange={handlePlaceChange}
-                value={place}
+                onChange={handleChange}
+                value={name}
             />
             <span className="place-error popup__error"></span>
             <input
@@ -50,7 +47,7 @@ function AddPlacePopup(props) {
                 placeholder="Ссылка на картинку"
                 className="popup__input popup__input_type-content-link"
                 required
-                onChange={handleLinkChange}
+                onChange={handleChange}
                 value={link}
             />
             <span className="link-error popup__error"></span>

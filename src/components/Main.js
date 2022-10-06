@@ -1,7 +1,5 @@
 import React from "react";
-import api from "../utils/Api";
 import Card from "./Card";
-import defaultAvatar from "../images/profile-avatar.jpg";
 import { CurrentUserContext } from '../contexts/CurrentUserContext';
 
 function Main(props) {
@@ -10,7 +8,15 @@ function Main(props) {
   const currentUser = React.useContext(CurrentUserContext);
 
   const cardList = cards.map((card) => {
-    return <Card key={card._id} card={card} onCardLike={onCardLike} onCardDelete={onCardDelete} onCardClick={onCardClick} />
+    return (
+      <Card
+        key={card._id}
+        card={card}
+        onCardLike={onCardLike}
+        onCardDelete={onCardDelete}
+        onCardClick={onCardClick}
+      />
+    );
   });
 
   return (
@@ -34,7 +40,7 @@ function Main(props) {
                 onClick={onEditProfile}
                 type="button"
                 className="profile__edit-button"
-              ></button>
+              />
             </div>
             <p className="profile__subtitle">{currentUser.about}</p>
           </div>
@@ -43,7 +49,7 @@ function Main(props) {
           onClick={onAddPlace}
           type="button"
           className="profile__add-button"
-        ></button>
+        />
       </section>
       <section className="elements">
         <ul className="elements__list">

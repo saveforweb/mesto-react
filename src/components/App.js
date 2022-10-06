@@ -8,16 +8,15 @@ import EditProfilePopup from "./EditProfilePopup";
 import EditAvatarPopup from "./EditAvatarPopup";
 import AddPlacePopup from "./AddPlacePopup";
 import api from "../utils/Api";
-import loader from '../images/puff.svg';
-
 
 function App() {
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = React.useState(false);
   const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = React.useState(false);
   const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = React.useState(false);
   const [selectedCard, setSelectedCard] = React.useState({ name: '', link: '' });
-  const [currentUser, setCurrentUser] = React.useState({});
+  const [currentUser, setCurrentUser] = React.useState({ name: '', about: '' });
   const [cards, setCards] = React.useState([]);
+  const [isLoading, setIsLoading] = React.useState(false);
 
   React.useEffect(() => {
     api.getInitialCards()
@@ -27,7 +26,6 @@ function App() {
       .catch((result) => {
         console.log(result);
       })
-
     api.getUserInfo()
       .then((result) => {
         setCurrentUser(result);
@@ -45,12 +43,18 @@ function App() {
       .then((newCard) => {
         setCards((state) => state.map((c) => c._id === card._id ? newCard : c));
       })
+      .catch((result) => {
+        console.log(result);
+      })
   }
 
   function handleCardDelete(card) {
     api.deleleCard(card._id)
       .then(() => {
         setCards((state) => state.filter(c => c._id !== card._id));
+      })
+      .catch((result) => {
+        console.log(result);
       })
   }
 
@@ -84,6 +88,7 @@ function App() {
   }
 
   function handleUpdateUser({ name, about }) {
+    setIsLoading(true);
     api.updateUserInfo(name, about)
       .then((result) => {
         setCurrentUser(result);
@@ -92,9 +97,13 @@ function App() {
       .catch((result) => {
         console.log(result);
       })
+      .finally(() => {
+        setIsLoading(false);
+      })
   }
 
   function handleAddPlaceSubmit({ name, link }) {
+    setIsLoading(true);
     api.addUserCard(name, link)
       .then((newCard) => {
         setCards([newCard, ...cards]);
@@ -103,9 +112,13 @@ function App() {
       .catch((result) => {
         console.log(result);
       })
+      .finally(() => {
+        setIsLoading(false);
+      })
   }
 
   function handleUpdateAvatar({ link }) {
+    setIsLoading(true);
     api.updateUserAvatar(link)
       .then((result) => {
         setCurrentUser(result);
@@ -114,7 +127,26 @@ function App() {
       .catch((result) => {
         console.log(result);
       })
+      .finally(() => {
+        setIsLoading(false);
+      })
   }
+
+  const isOpen = isEditAvatarPopupOpen || isEditProfilePopupOpen || isAddPlacePopupOpen || selectedCard.link;
+
+  React.useEffect(() => {
+    function closeByEscape(e) {
+      if (e.key === 'Escape') {
+        closeAllPopups();
+      }
+    }
+    if (isOpen) {
+      document.addEventListener('keydown', closeByEscape);
+      return () => {
+        document.removeEventListener('keydown', closeByEscape);
+      }
+    }
+  }, [isOpen])
 
   return (
     <div className="page">
@@ -131,11 +163,11 @@ function App() {
         />
         <Footer />
 
-        <EditProfilePopup isOpen={isEditProfilePopupOpen} onClose={handleOverlay} onUpdateUser={handleUpdateUser} />
+        <EditProfilePopup isOpen={isEditProfilePopupOpen} onClose={handleOverlay} onUpdateUser={handleUpdateUser} isLoading={isLoading} />
 
-        <AddPlacePopup isOpen={isAddPlacePopupOpen} onClose={handleOverlay} onAddPlace={handleAddPlaceSubmit} />
+        <AddPlacePopup isOpen={isAddPlacePopupOpen} onClose={handleOverlay} onAddPlace={handleAddPlaceSubmit} isLoading={isLoading} />
 
-        <EditAvatarPopup isOpen={isEditAvatarPopupOpen} onClose={handleOverlay} onUpdateAvatar={handleUpdateAvatar} />
+        <EditAvatarPopup isOpen={isEditAvatarPopupOpen} onClose={handleOverlay} onUpdateAvatar={handleUpdateAvatar} isLoading={isLoading} />
 
         <ImagePopup
           card={selectedCard}

@@ -1,30 +1,24 @@
 import React from "react";
 import PopupWithForm from "./PopupWithForm";
+import useForm from "../hooks/useForm"
 import { CurrentUserContext } from '../contexts/CurrentUserContext';
 
 function EditProfilePopup(props) {
-    const { isOpen, onClose, onUpdateUser } = props;
-    const [name, setName] = React.useState('');
-    const [description, setDescription] = React.useState('');
+    const { isOpen, onClose, onUpdateUser, isLoading } = props;
+
+    const { values, handleChange, setValues } = useForm({ name: '', subtitle: '' });
+    const name = values.name;
+    const subtitle = values.subtitle;
 
     const currentUser = React.useContext(CurrentUserContext);
 
     React.useEffect(() => {
-        setName(currentUser.name || '');
-        setDescription(currentUser.about || '');
-    }, [currentUser]);
-
-    function handleNameChange(e) {
-        setName(e.target.value);
-    }
-
-    function handleDescriptionChange(e) {
-        setDescription(e.target.value);
-    }
+        setValues({ name: currentUser.name, subtitle: currentUser.about })
+    }, [currentUser, isOpen]);
 
     function handleSubmit(e) {
         e.preventDefault();
-        onUpdateUser({ name, about: description });
+        onUpdateUser({ name, about: subtitle });
     }
 
     return (
@@ -33,7 +27,7 @@ function EditProfilePopup(props) {
             name="profile"
             isOpen={isOpen}
             onClose={onClose}
-            buttonText="Сохранить"
+            buttonText={isLoading ? 'Сохранение...' : 'Сохранить'}
             onSubmit={handleSubmit}
         >
             <input
@@ -45,7 +39,7 @@ function EditProfilePopup(props) {
                 minLength={2}
                 maxLength={40}
                 required
-                onChange={handleNameChange}
+                onChange={handleChange}
                 value={name}
             />
             <span className="name-error popup__error"></span>
@@ -58,8 +52,8 @@ function EditProfilePopup(props) {
                 minLength={2}
                 maxLength={200}
                 required
-                onChange={handleDescriptionChange}
-                value={description}
+                onChange={handleChange}
+                value={subtitle}
             />
             <span className="subtitle-error popup__error"></span>
         </PopupWithForm>
